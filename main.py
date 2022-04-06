@@ -1,48 +1,23 @@
 import time
-import requests
 import os
 import webbrowser
 
 from win10toast_click import ToastNotifier
 from dotenv import load_dotenv
+from urlbase import *
+from mainrequests import *
+from notifications import *
 
 load_dotenv()
 
-session = requests.session()
-
 CHECK_INTERVAL = 1
 
-ROBLOSECURITY = os.getenv("ROBLOSECURITY")
-
 CURRENT_MESSAGE = None
-
-authurl = "https://auth.roblox.com/v2/logout"
-markreadurl = "https://privatemessages.roblox.com/v1/messages/mark-read"
-getmessagesurl = "https://privatemessages.roblox.com/v1/messages?pageNumber=1&pageSize=5&messageTab=Inbox"
-sendmessageurl = "https://privatemessages.roblox.com/v1/messages/send"
-
-lastmessageurl = "https://www.roblox.com/my/messages/#!/sent?messageIdx=0"
-
-session.cookies[".ROBLOSECURITY"] = ROBLOSECURITY
-
-def rbx_request(method, url, **kwargs):
-    request = session.request(method, url, **kwargs)
-    method = method.lower()
-    if (method == "post") or (method == "put") or (method == "patch") or (method == "delete"):
-        if "X-CSRF-TOKEN" in request.headers:
-            session.headers["X-CSRF-TOKEN"] = request.headers["X-CSRF-TOKEN"]
-            if request.status_code == 403:  # Request failed, send it again
-                request = session.request(method, url, **kwargs)
-    return request
 
 def formatMessage(body):
     newBody = body.replace("<br />", "\n")
 
     return newBody
-
-def send_notification(title, message, duration, callback):
-    toaster = ToastNotifier()
-    toaster.show_toast(title, message, duration=duration, callback_on_click=callback, threaded=False)
 
 def open_last_message():
     webbrowser.open(lastmessageurl)
@@ -82,8 +57,7 @@ def on_click():
 
     send_notification("Content", "{}".format(formatMessage(CURRENT_MESSAGE["body"])), 15, reply)
 
-
-rbx_request("POST", "https://auth.roblox.com/")
+rbx_request("POST", authurl)
 
 while True:    
     resp = rbx_request("GET", getmessagesurl)

@@ -1,0 +1,5 @@
+authurl = "https://auth.roblox.com/"
+markreadurl = "https://privatemessages.roblox.com/v1/messages/mark-read"
+getmessagesurl = "https://privatemessages.roblox.com/v1/messages?pageNumber=1&pageSize=5&messageTab=Inbox"
+sendmessageurl = "https://privatemessages.roblox.com/v1/messages/send"
+lastmessageurl = "https://www.roblox.com/my/messages/#!/sent?messageIdx=0"
